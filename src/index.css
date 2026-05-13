@@ -97,10 +97,139 @@ code {
   background: rgba(143, 105, 71, 0.85) !important;
 }
 
-/* Responsive: on phones, hide the desktop sidebar so the bottom nav drives navigation.
-   Desktop UI is preserved exactly. */
+/* ==============================================================
+   Mobile responsive layer ( ≤ 768px ).
+   Desktop UI above 768px is untouched.
+   Palette preserved (cream #FFF3E4 / card #EAD4AF / ink #503D32 / accent #8F6947).
+   ============================================================== */
 @media (max-width: 768px) {
+  /* Lock horizontal scroll across the whole document */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  #root {
+    width: 100% !important;
+    max-width: 100vw !important;
+    border-inline: none !important;
+  }
+
+  /* Shell + main fill the viewport, sidebar gone, bottom nav drives nav */
+  .app-shell {
+    width: 100vw;
+    max-width: 100vw;
+  }
   .app-sidebar {
     display: none !important;
+  }
+  .app-main {
+    width: 100% !important;
+  }
+
+  /* Top bar: keep title and actions on one row, allow truncation */
+  .app-topbar {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+  }
+  .app-topbar-title > div:first-child {
+    font-size: 17px !important;
+  }
+  .app-topbar-title > div:last-child {
+    font-size: 9px !important;
+  }
+  .app-topbar-actions {
+    gap: 6px !important;
+  }
+
+  /* Page paddings — 16px as requested */
+  .page-root {
+    padding: 16px !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .page-root > * {
+    max-width: 100%;
+  }
+
+  /* Page header: stack title + primary CTA */
+  .page-header {
+    align-items: stretch !important;
+  }
+  .page-header > button {
+    width: 100%;
+  }
+
+  /* Dashboard hero */
+  .dash-hero {
+    padding: 14px 14px !important;
+    gap: 12px !important;
+  }
+
+  /* Dashboard stat cards: 3 → 2 cols */
+  .dash-stat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* City schedule + expense breakdown: 2 → 1 col */
+  .dash-detail-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Upcoming itinerary row — allow inner blocks to wrap */
+  .dash-upcoming-row {
+    flex-wrap: wrap !important;
+  }
+  .dash-upcoming-row > div:nth-child(3) {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  /* Expenses summary cards: 2 → 1 col */
+  .exp-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Settlement balance row stays 3 cols but tighter */
+  .settle-balance-grid {
+    gap: 6px !important;
+  }
+  /* Transactions row may wrap so the amount + button drop to a new line */
+  .settle-txn-row {
+    flex-wrap: wrap !important;
+  }
+
+  /* Map spot grid: 2 → 1 col */
+  .map-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Modal: fit screen and reduce inner padding */
+  .journal-modal {
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 24px) !important;
+    padding: 22px 18px 18px !important;
+    border-radius: 22px !important;
+  }
+
+  /* Bottom nav: bigger touch target and labels (flex already pins it) */
+  .app-bottomnav button {
+    padding: 9px 0 6px !important;
+  }
+  .app-bottomnav button > span:first-child {
+    font-size: 20px !important;
+  }
+  .app-bottomnav button > span:last-child {
+    font-size: 10px !important;
+  }
+}
+
+/* Very narrow phones — drop stat cards to a single column */
+@media (max-width: 380px) {
+  .dash-stat-grid {
+    grid-template-columns: 1fr !important;
   }
 }

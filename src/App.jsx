@@ -228,7 +228,7 @@ function JournalModal({ title, subtitle, onClose, onSave, onDelete, err, childre
   const handleBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
   return (
     <div onClick={handleBackdrop} style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: C.overlay, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-      <div style={{ background: C.modalPanel, borderRadius: 28, padding: "28px 28px 24px", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", boxShadow: C.shadow, border: `1px solid ${C.lineFaint}`, position: "relative" }}>
+      <div className="journal-modal" style={{ background: C.modalPanel, borderRadius: 28, padding: "28px 28px 24px", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", boxShadow: C.shadow, border: `1px solid ${C.lineFaint}`, position: "relative" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, borderRadius: "28px 28px 0 0", background: C.card }} />
         <div style={{ marginBottom: 20, paddingTop: 4 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
@@ -358,8 +358,9 @@ function DashboardPage({ itinerary, expenses }) {
   const catTotals = expenses.reduce((acc, e) => { acc[e.category] = (acc[e.category] || 0) + e.amount; return acc; }, {});
   const sorted = [...itinerary].sort((a, b) => dateSortKey(a.date) - dateSortKey(b.date) || timeSortKey(a.time) - timeSortKey(b.time));
   return (
-    <div style={{ padding: "28px 28px 40px" }}>
+    <div className="page-root dash-page" style={{ padding: "28px 28px 40px" }}>
       <div
+        className="dash-hero"
         style={{
           background: C.infoCard,
           borderRadius: 18,
@@ -398,7 +399,7 @@ function DashboardPage({ itinerary, expenses }) {
           <div style={{ fontSize: 9, color: C.textMuted, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginTop: 2 }}>days</div>
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 22 }}>
+      <div className="dash-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 22 }}>
         {[
           { label: "已花費", value: `$${total.toFixed(0)}`, sub: "AUD · 累計", subc: C.textMuted },
           { label: "Trip Days", value: `${TRIP_DAYS_COUNT}`, sub: "days total", subc: C.textMuted },
@@ -411,7 +412,7 @@ function DashboardPage({ itinerary, expenses }) {
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 18 }}>
+      <div className="dash-detail-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 18 }}>
         <PaperCard style={{ boxShadow: C.shadow }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: C.ink, marginBottom: 12, letterSpacing: "0.06em" }}>城市行程</div>
           {TRIP_SEGMENTS.map((c) => (
@@ -449,7 +450,7 @@ function DashboardPage({ itinerary, expenses }) {
         {sorted.slice(0, 3).map((item) => {
           const city = getCity(item.city);
           return (
-            <div key={item.id} style={{ display: "flex", gap: 12, padding: "11px 13px", background: C.infoCard, borderRadius: 13, marginBottom: 7, alignItems: "flex-start", border: `1px solid ${C.lineFaint}` }}>
+            <div key={item.id} className="dash-upcoming-row" style={{ display: "flex", gap: 12, padding: "11px 13px", background: C.infoCard, borderRadius: 13, marginBottom: 7, alignItems: "flex-start", border: `1px solid ${C.lineFaint}` }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: C.textMuted, minWidth: 42, marginTop: 2 }}>{item.time}</div>
               <div style={{ fontSize: 20, lineHeight: 1, marginTop: 2 }}>{item.emoji}</div>
               <div style={{ flex: 1 }}>
@@ -482,8 +483,8 @@ function ItineraryPage({ itinerary, setItinerary, showSaved }) {
   const isModalOpen = selectedItem !== null;
   const isNew = selectedItem === "new";
   return (
-    <div style={{ padding: "24px 24px 36px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18 }}>
+    <div className="page-root itin-page" style={{ padding: "24px 24px 36px" }}>
+      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18, gap: 10, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: C.ink }}>Itinerary 🗒️</div>
           <div style={{ fontSize: 12, color: C.textMuted, marginTop: 4 }}>點擊卡片編輯 · {itinerary.length} 個景點 🌿</div>
@@ -509,7 +510,7 @@ function ItineraryPage({ itinerary, setItinerary, showSaved }) {
             {items.map((item) => {
               const city = getCity(item.city);
               return (
-                <HoverCard key={item.id} onClick={() => openCard(item)} style={{ display: "flex", gap: 12, padding: "14px 16px", background: C.infoCard, borderRadius: 16, marginBottom: 8, border: `1px solid ${C.lineFaint}`, alignItems: "flex-start" }}>
+                <HoverCard key={item.id} onClick={() => openCard(item)} style={{ display: "flex", gap: 12, padding: "14px 16px", background: C.infoCard, borderRadius: 16, marginBottom: 8, border: `1px solid ${C.lineFaint}`, alignItems: "flex-start", flexWrap: "wrap" }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: C.textMuted, minWidth: 42, paddingTop: 3 }}>{item.time}</div>
                   <div style={{ fontSize: 22, lineHeight: 1, paddingTop: 1 }}>{item.emoji}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -548,15 +549,15 @@ function ExpensesPage({ expenses, setExpenses, showSaved }) {
   const isModalOpen = selectedItem !== null;
   const isNew = selectedItem === "new";
   return (
-    <div style={{ padding: "24px 24px 36px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18 }}>
+    <div className="page-root exp-page" style={{ padding: "24px 24px 36px" }}>
+      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18, gap: 10, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: C.ink }}>Expenses 💰</div>
           <div style={{ fontSize: 12, color: C.textMuted, marginTop: 4 }}>點擊卡片編輯 · {expenses.length} 筆支出 🧾</div>
         </div>
         <button onClick={() => setSelectedItem("new")} className="journal-btn-primary" style={{ background: C.accent, color: C.cream, border: "none", borderRadius: 14, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", boxShadow: C.shadow, fontFamily: "'Nunito', sans-serif" }}>＋ 新增支出</button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10, marginBottom: 18 }}>
+      <div className="exp-summary-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10, marginBottom: 18 }}>
         {[
           { label: "已花費", value: `$${total.toFixed(0)}`, sub: "AUD · 3 travelers", bg: C.cream, text: C.ink },
           { label: "Per Person", value: `$${perPerson.toFixed(0)}`, sub: "average each", bg: C.card, text: C.ink },
@@ -576,7 +577,7 @@ function ExpensesPage({ expenses, setExpenses, showSaved }) {
           const payer = getTraveler(exp.paidBy);
           const city = getCity(exp.city);
           return (
-            <HoverCard key={exp.id} onClick={() => setSelectedItem({ ...exp })} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 14px", background: C.cream, borderRadius: 14, marginBottom: 7, border: `1px solid ${C.lineFaint}` }}>
+            <HoverCard key={exp.id} onClick={() => setSelectedItem({ ...exp })} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 14px", background: C.cream, borderRadius: 14, marginBottom: 7, border: `1px solid ${C.lineFaint}`, flexWrap: "wrap" }}>
               <div style={{ fontSize: 21, width: 36, textAlign: "center", paddingTop: 2, flexShrink: 0 }}>{exp.emoji}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.textMain }}>{exp.name}</div>
@@ -627,7 +628,7 @@ function SettlementPage({ expenses }) {
   const paidByPerson = (id) => expenses.filter((e) => e.paidBy === id).reduce((s, e) => s + e.amount, 0);
   const togglePaid = (key) => setPaidSet((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
   return (
-    <div style={{ padding: "24px 24px 36px" }}>
+    <div className="page-root settle-page" style={{ padding: "24px 24px 36px" }}>
       <div style={{ marginBottom: 18 }}>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: C.ink }}>Settlement 🤝</div>
         <div style={{ fontSize: 12, color: C.textMuted, marginTop: 4 }}>根據支出自動計算 · 修改後即時更新 ✨</div>
@@ -639,7 +640,7 @@ function SettlementPage({ expenses }) {
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 34, color: C.ink }}>${perPerson.toFixed(2)}</div>
           <div style={{ fontSize: 11, color: C.textMuted, marginTop: 3 }}>Total ${total.toFixed(2)} ÷ {TRAVELERS.length} people</div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 9 }}>
+        <div className="settle-balance-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 9 }}>
           {TRAVELERS.map((t) => {
             const bal = balance[t.id] || 0;
             const isPos = bal > 0.01;
@@ -666,7 +667,7 @@ function SettlementPage({ expenses }) {
           const from = getTraveler(txn.from);
           const to = getTraveler(txn.to);
           return (
-            <div key={key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", background: paid ? C.card : C.cream, borderRadius: 14, marginBottom: 9, border: `1.5px solid ${paid ? C.line : "transparent"}` }}>
+            <div key={key} className="settle-txn-row" style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", background: paid ? C.card : C.cream, borderRadius: 14, marginBottom: 9, border: `1.5px solid ${paid ? C.line : "transparent"}`, flexWrap: "wrap" }}>
               <Avatar id={txn.from} size={32} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.textMain }}>{from?.name} → {to?.name}</div>
@@ -709,7 +710,7 @@ function MapPage() {
   const grouped = CITIES.reduce((acc, c) => { acc[c.id] = filtered.filter((s) => s.city === c.id); return acc; }, {});
   const openMaps = (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
   return (
-    <div style={{ padding: "24px 24px 36px" }}>
+    <div className="page-root map-page" style={{ padding: "24px 24px 36px" }}>
       <div style={{ marginBottom: 18 }}>
         <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 26, color: C.ink }}>Map 🗺️</div>
         <div style={{ fontSize: 12, color: C.textMuted, marginTop: 4 }}>所有景點一目瞭然 · 點擊開啟 Google Maps 📍</div>
@@ -737,7 +738,7 @@ function MapPage() {
       {CITIES.filter((c) => grouped[c.id]?.length > 0).map((city) => (
         <div key={city.id} style={{ marginBottom: 22 }}>
           <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 14, fontWeight: 800, color: C.ink, marginBottom: 11 }}>{city.emoji} {city.label}</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div className="map-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {grouped[city.id].map((spot) => (
               <div key={spot.id} style={{ background: C.cream, borderRadius: 16, padding: "13px 15px", boxShadow: C.shadow, border: `1px solid ${C.lineFaint}`, display: "flex", flexDirection: "column", gap: 9 }}>
                 <div style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
@@ -764,7 +765,7 @@ const NAV = [
   { id: "dashboard", label: "Dashboard", icon: "🏠" },
   { id: "itinerary", label: "Itinerary", icon: "🗒️" },
   { id: "expenses", label: "Expenses", icon: "💰" },
-  { id: "settlement", label: "Settle", icon: "🤝" },
+  { id: "settlement", label: "Settlement", icon: "🤝" },
   { id: "map", label: "Map", icon: "🗺️" },
 ];
 
@@ -793,19 +794,19 @@ export default function App() {
     }
   };
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: C.whiteBeige, fontFamily: "'Nunito', sans-serif" }}>
+    <div className="app-shell" style={{ display: "flex", flexDirection: "column", height: "100vh", background: C.whiteBeige, fontFamily: "'Nunito', sans-serif" }}>
       {/* Top Bar */}
-      <div style={{ background: C.whiteBeige, borderBottom: `1px solid ${C.lineFaint}`, padding: "11px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-        <div>
-          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 21, color: C.ink }}>Trip to Australia</div>
-          <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: "0.07em", textTransform: "uppercase" }}>Australia · {TRIP_DATE_RANGE}</div>
+      <div className="app-topbar" style={{ background: C.whiteBeige, borderBottom: `1px solid ${C.lineFaint}`, padding: "11px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, gap: 12 }}>
+        <div className="app-topbar-title" style={{ minWidth: 0 }}>
+          <div style={{ fontFamily: "'DM Serif Display', serif", fontSize: 21, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Trip to Australia</div>
+          <div style={{ fontSize: 10, color: C.textMuted, letterSpacing: "0.07em", textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Australia · {TRIP_DATE_RANGE}</div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ display: "flex", gap: 4 }}>{TRAVELERS.map((t) => <Avatar key={t.id} id={t.id} size={26} />)}</div>
-          <button onClick={handleReset} style={{ background: C.whiteBeige, border: `1px solid ${C.lineFaint}`, borderRadius: 10, padding: "5px 10px", fontSize: 11, fontWeight: 700, color: C.textMuted, cursor: "pointer", fontFamily: "'Nunito', sans-serif" }}>↺ 重設</button>
+        <div className="app-topbar-actions" style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <div className="app-topbar-avatars" style={{ display: "flex", gap: 4 }}>{TRAVELERS.map((t) => <Avatar key={t.id} id={t.id} size={26} />)}</div>
+          <button onClick={handleReset} style={{ background: C.whiteBeige, border: `1px solid ${C.lineFaint}`, borderRadius: 10, padding: "5px 10px", fontSize: 11, fontWeight: 700, color: C.textMuted, cursor: "pointer", fontFamily: "'Nunito', sans-serif", whiteSpace: "nowrap" }}>↺ 重設</button>
         </div>
       </div>
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div className="app-middle" style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
         {/* Sidebar */}
         <aside className="app-sidebar" style={{ width: 196, background: C.whiteBeige, borderRight: `1px solid ${C.lineFaint}`, display: "flex", flexDirection: "column", flexShrink: 0, overflowY: "auto" }}>
           <div style={{ padding: "13px 12px 12px", borderBottom: `1px solid ${C.lineFaint}` }}>
@@ -836,7 +837,7 @@ export default function App() {
             ))}
           </div>
         </aside>
-        <main style={{ flex: 1, overflowY: "auto", background: C.pageCanvas }}>{renderPage()}</main>
+        <main className="app-main" style={{ flex: 1, overflowY: "auto", overflowX: "hidden", background: C.pageCanvas, minWidth: 0 }}>{renderPage()}</main>
       </div>
       {/* Mobile Bottom Nav */}
       <nav className="app-bottomnav" style={{ background: C.whiteBeige, borderTop: `1px solid ${C.lineFaint}`, display: "flex", flexShrink: 0 }}>
