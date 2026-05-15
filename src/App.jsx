@@ -840,7 +840,7 @@ export default function App() {
         <main className="app-main" style={{ flex: 1, overflowY: "auto", overflowX: "hidden", background: C.pageCanvas, minWidth: 0 }}>{renderPage()}</main>
       </div>
       {/* Mobile Bottom Nav */}
-      <nav className="app-bottomnav" style={{ background: C.whiteBeige, borderTop: `1px solid ${C.lineFaint}`, display: "flex", flexShrink: 0 }}>
+      <nav className="app-bottomnav" role="navigation" aria-label="Primary" style={{ background: C.whiteBeige, borderTop: `1px solid ${C.lineFaint}`, display: "flex", flexShrink: 0 }}>
         {NAV.map((item) => (
           <button key={item.id} onClick={() => setPage(item.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "7px 0 5px", background: "none", border: "none", cursor: "pointer", color: page === item.id ? C.accent : C.textMuted, fontFamily: "'Nunito', sans-serif" }}>
             <span style={{ fontSize: 19 }}>{item.icon}</span>
