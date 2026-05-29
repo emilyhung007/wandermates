@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useTripData } from "./hooks/useTripData.js";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* PALETTE — warm travel journal (4 colors + derived only)        */
@@ -130,20 +131,6 @@ const DEFAULT_EXPENSES = [
   { id: 6, name: "Opera House 導覽 × 3", category: "activities", city: "sydney", date: "Jul 15", amount: 129, paidBy: "emily", splitAmong: ["emily", "charlotte", "alice"], emoji: "🎭", notes: "" },
   { id: 7, name: "The Rocks 午餐", category: "food", city: "sydney", date: "Jul 16", amount: 98, paidBy: "alice", splitAmong: ["emily", "charlotte", "alice"], emoji: "🥗", notes: "" },
 ];
-
-/* ─────────────────────────────────────────────────────────────── */
-/* LOCALSTORAGE                                                    */
-/* ─────────────────────────────────────────────────────────────── */
-const LS_ITIN = "trip_koala_itinerary_v6";
-const LS_EXP = "trip_koala_expenses_v6";
-const lsRead = (k, fb) => { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : fb; } catch { return fb; } };
-const lsWrite = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* quota / disabled storage — best-effort */ } };
-
-function usePersistedState(key, def) {
-  const [state, setState] = useState(() => lsRead(key, def));
-  useEffect(() => { lsWrite(key, state); }, [key, state]);
-  return [state, setState];
-}
 
 /* Collision-safe id generator (Date.now() alone can collide on fast double-clicks). */
 const newId = () => Date.now() * 1000 + Math.floor(Math.random() * 1000);
@@ -620,13 +607,18 @@ function ExpensesPage({ expenses, setExpenses, showSaved }) {
 /* ═══════════════════════════════════════════════════════════════ */
 /* SETTLEMENT                                                      */
 /* ═══════════════════════════════════════════════════════════════ */
-function SettlementPage({ expenses }) {
-  const [paidSet, setPaidSet] = useState(new Set());
+function SettlementPage({ expenses, settlementPaid, setSettlementPaid }) {
+  const paidSet = useMemo(() => new Set(settlementPaid), [settlementPaid]);
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const perPerson = total / TRAVELERS.length;
   const { balance, txns } = calcSettlement(expenses);
   const paidByPerson = (id) => expenses.filter((e) => e.paidBy === id).reduce((s, e) => s + e.amount, 0);
-  const togglePaid = (key) => setPaidSet((prev) => { const n = new Set(prev); n.has(key) ? n.delete(key) : n.add(key); return n; });
+  const togglePaid = (key) => setSettlementPaid((prev) => {
+    const n = new Set(prev);
+    if (n.has(key)) n.delete(key);
+    else n.add(key);
+    return [...n];
+  });
   return (
     <div className="page-root settle-page" style={{ padding: "24px 24px 36px" }}>
       <div style={{ marginBottom: 18 }}>
@@ -771,16 +763,20 @@ const NAV = [
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
-  const [itinerary, setItinerary] = usePersistedState(LS_ITIN, DEFAULT_ITINERARY);
-  const [expenses, setExpenses] = usePersistedState(LS_EXP, DEFAULT_EXPENSES);
+  const {
+    itinerary,
+    setItinerary,
+    expenses,
+    setExpenses,
+    settlementPaid,
+    setSettlementPaid,
+    resetToDefaults,
+  } = useTripData({ defaultItinerary: DEFAULT_ITINERARY, defaultExpenses: DEFAULT_EXPENSES });
   const [savedVisible, setSavedVisible] = useState(false);
   const showSaved = useCallback(() => { setSavedVisible(true); setTimeout(() => setSavedVisible(false), 2200); }, []);
-  const handleReset = () => {
+  const handleReset = async () => {
     if (!window.confirm("確定要重設所有資料到預設值嗎？")) return;
-    lsWrite(LS_ITIN, DEFAULT_ITINERARY);
-    lsWrite(LS_EXP, DEFAULT_EXPENSES);
-    setItinerary(DEFAULT_ITINERARY);
-    setExpenses(DEFAULT_EXPENSES);
+    await resetToDefaults();
     showSaved();
   };
   const renderPage = () => {
@@ -788,7 +784,7 @@ export default function App() {
       case "dashboard": return <DashboardPage itinerary={itinerary} expenses={expenses} />;
       case "itinerary": return <ItineraryPage itinerary={itinerary} setItinerary={setItinerary} showSaved={showSaved} />;
       case "expenses": return <ExpensesPage expenses={expenses} setExpenses={setExpenses} showSaved={showSaved} />;
-      case "settlement": return <SettlementPage expenses={expenses} />;
+      case "settlement": return <SettlementPage expenses={expenses} settlementPaid={settlementPaid} setSettlementPaid={setSettlementPaid} />;
       case "map": return <MapPage />;
       default: return null;
     }
